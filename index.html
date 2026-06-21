@@ -1,0 +1,49 @@
+<script>
+
+const scene = document.querySelector("a-scene");
+
+const TOTAL_MARKERS = 26;
+
+let currentVideo = null;
+
+function stopVideo() {
+  if (currentVideo) {
+    currentVideo.pause();
+    currentVideo.currentTime = 0;
+    currentVideo.style.display = "none";
+  }
+}
+
+for (let i = 0; i < TOTAL_MARKERS; i++) {
+
+  const marker = document.createElement("a-entity");
+  marker.setAttribute("mindar-image-target", `targetIndex:${i}`);
+
+  // 001.mp4, 002.mp4 ... 026.mp4
+  const videoName = String(i + 1).padStart(3, "0") + ".mp4";
+
+  marker.addEventListener("targetFound", () => {
+
+    stopVideo();
+
+    currentVideo = document.getElementById("fullscreenVideo");
+
+    currentVideo.src = `./videos/${videoName}`;
+    currentVideo.style.display = "block";
+
+    currentVideo.load();
+
+    currentVideo.play().catch(err => {
+      console.log(err);
+    });
+
+  });
+
+  marker.addEventListener("targetLost", () => {
+    stopVideo();
+  });
+
+  scene.appendChild(marker);
+}
+
+</script>
